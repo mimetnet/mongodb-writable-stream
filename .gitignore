@@ -1,0 +1,11 @@
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+*.tgz
+
+node_modules
+npm-debug.log
