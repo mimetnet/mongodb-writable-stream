@@ -35,9 +35,11 @@ StreamingInsert.prototype = Object.create(Stream.prototype, {constructor: {value
 
 StreamingInsert.prototype.write = function(chunk) {
     if (this.writable) {
-        if (this.bufferLength == this.queue.push(this._transform(chunk))) {
+        if ('function' === typeof(this._transform))
+            chunk = this._transform(chunk);
+
+        if (this.bufferLength == this.queue.push(chunk))
             setImmediate(this._dequeue.bind(this));
-        }
 
         return true;
     }
