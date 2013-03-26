@@ -1,9 +1,10 @@
 {
-  "name": "mongodb-stream-insert",
+  "name": "mongodb-insert-stream",
   "version": "0.0.1",
-  "description": "Pipe a stream into a MongoDB collection",
+  "description": "Pipe a stream into a MongoDB collection and out again if needed",
   "main": "index.js",
   "dependencies": {
+    "readable-stream": ">= 1.0.0",
     "setimmediate": ">= 1.0.1"
   },
   "scripts": {
@@ -13,6 +14,9 @@
   "keywords": [
     "mongodb",
     "mongo",
+    "writable",
+    "readable",
+    "duplex",
     "stream",
     "pipe"
   ],

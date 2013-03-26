@@ -1,7 +1,7 @@
 mongodb-stream-insert
 =============
 
-Node.js Library for piping a stream into a MongoDB collection.
+Node.js Library for piping a stream into a MongoDB collection and out again if needed.
 
 
 Install

@@ -1,14 +1,16 @@
 var util = require('util');
-var Stream = require('stream');
+var Duplex = require('stream').Duplex;
+
+if (!Duplex) {
+    Duplex = require('readable-stream/duplex');
+}
 
 require('setimmediate');
 
-function StreamingInsert(collection, options, bufferLength) {
-    if (!(this instanceof(StreamingInsert)))
-        return new StreamingInsert(collection, options, bufferLength);
+function InsertStream(collection, options) {
+    if (!(this instanceof(InsertStream)))
+        return new InsertStream(collection, options);
 
-    if ('number' !== typeof(bufferLength))
-        bufferLength = 50;
     if (options && 'object' != typeof(options))
         throw 'Second argument isnt a MongoDB Insert options';
 
@@ -19,38 +21,67 @@ function StreamingInsert(collection, options, bufferLength) {
     if (3 > collection.insert.length)
         throw 'First collection.insert expects three arguments';
 
-    Stream.call(this);
+    Duplex.call(this, {objectMode:true});
 
-    this.writable = true;
-
-    this.collection = collection;
-    this.bufferLength = bufferLength;
-    this.options = options;
-    this.error = false;
-    this.queue = [];
-    this.inserted = 0;
+    this._state = {
+        queue: [],
+        ending: false,
+        collection: collection,
+        options: options,
+        highWaterMark: (~~options.highWaterMark || 50)
+    };
 }
 
-StreamingInsert.prototype = Object.create(Stream.prototype, {constructor: {value: StreamingInsert}});
+InsertStream.prototype = Object.create(Duplex.prototype, {constructor: {value: InsertStream}});
 
-StreamingInsert.prototype.write = function(chunk) {
-    if (this.writable) {
-        if ('function' === typeof(this._transform))
-            chunk = this._transform(chunk);
-
-        if (this.bufferLength == this.queue.push(chunk))
-            setImmediate(this._dequeue.bind(this));
-
-        return true;
-    }
-
-    this.emit('error', 'StreamingInsert has been closed');
-
-    return false;
-
+InsertStream.prototype._read = function(bytes) {
+    //we push() from insert callback so nothing to do here
 };
 
-StreamingInsert.prototype.transform = function(method) {
+InsertStream.prototype._write = function(chunk, encoding, done) {
+    if ('function' === typeof(this._transform))
+        chunk = this._transform(chunk);
+
+    this._state.queue.push(chunk);
+
+    if (this._state.highWaterMark != this._state.queue.length) {
+        done();
+    } else {
+        setImmediate(this._dequeue.bind(this), done);
+    }
+};
+
+InsertStream.prototype._dequeue = function(done) {
+    var self = this, chunk = this._state.queue.splice(0);
+
+    if (0 === chunk.length)
+        return;
+
+    this._state.collection.insert(chunk, this._state.options, function(error, results) {
+        if ('function' === typeof(done))
+            done(error);
+
+        if (error) {
+            self.emit('error', error);
+        } else {
+            results.forEach(self.push.bind(self));
+
+            self._checkFinish();
+        }
+    });
+};
+
+InsertStream.prototype.end = function(chunk, encoding, done) {
+    if (chunk)
+        Duplex.prototype.write.call(this, chunk, encoding, done);
+
+    if (false === this._state.ending) {
+        this._state.ending = true;
+        this._checkFinish();
+    }
+};
+
+InsertStream.prototype.transform = function(method) {
     if ('function' !== typeof(method))
         throw 'transform(val) only accepts functions';
 
@@ -58,49 +89,17 @@ StreamingInsert.prototype.transform = function(method) {
     return this;
 };
 
-StreamingInsert.prototype.end = function(chunk) {
-    if ('undefined' !== typeof(chunk) && null !== chunk) {
-        this.write(chunk);
-    }
-
-    this.writable = false;
-    this._checkFinish();
-};
-
-StreamingInsert.prototype._dequeue = function() {
-    var q = this.queue.splice(0, this.queue.length);
-
-    if (0 === q.length)
+InsertStream.prototype._checkFinish = function() {
+    if (false === this._state.ending)
         return;
 
-    this.collection.insert(q, this.options, this._handleInsert.bind(this));
-};
-
-StreamingInsert.prototype._handleInsert = function(error, result) {
-    if (util.isArray(result) && result.length) {
-        this.inserted += result.length;
-    }
-
-    if (error) {
-        this.emit('error', error);
-        this.end();
+    if (0 < this._state.queue.length) {
+        setImmediate(this._dequeue.bind(this));
     } else {
-        this._checkFinish();
+        setImmediate(Duplex.prototype.end.bind(this));
     }
 };
 
-StreamingInsert.prototype._checkFinish = function() {
-    if (false === this.writable && false === this.error) {
-        if (0 < this.queue.length) {
-            this._dequeue();
-        } else {
-            this.emit('finish');
-        }
-    }
+module.exports = function(collection, options) {
+    return new InsertStream(collection, options);
 };
-
-module.exports = function(collection, options, bufferLength) {
-    return new StreamingInsert(collection, options, bufferLength);
-};
-
-module.exports.StreamingInsert = StreamingInsert;
