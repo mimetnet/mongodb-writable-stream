@@ -1,5 +1,5 @@
 {
-  "name": "mongodb-insert-stream",
+  "name": "mongodb-writable-stream",
   "version": "0.0.1",
   "description": "Pipe a stream into a MongoDB collection and out again if needed",
   "main": "index.js",
