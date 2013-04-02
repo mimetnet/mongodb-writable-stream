@@ -1,7 +1,7 @@
 {
   "name": "mongodb-writable-stream",
   "version": "0.0.1-alpha",
-  "description": "Pipe a stream into a MongoDB collection and out again if needed",
+  "description": "Pipe a Node.js stream into a MongoDB collection and out again if needed",
   "main": "index.js",
   "dependencies": {
     "readable-stream": ">= 1.0.0",
@@ -13,7 +13,10 @@
   "scripts": {
     "test": "./node_modules/.bin/tap ./test/"
   },
-  "repository": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mimetnet/mongodb-writable-stream"
+  },
   "keywords": [
     "mongodb",
     "mongo",
