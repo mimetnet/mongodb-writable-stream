@@ -1,14 +1,17 @@
 {
   "name": "mongodb-writable-stream",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha",
   "description": "Pipe a stream into a MongoDB collection and out again if needed",
   "main": "index.js",
   "dependencies": {
     "readable-stream": ">= 1.0.0",
     "setimmediate": ">= 1.0.1"
   },
+  "devDependencies": {
+    "tap": ">= 0.4.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/tap ./test/"
   },
   "repository": "",
   "keywords": [
@@ -20,6 +23,14 @@
     "stream",
     "pipe"
   ],
-  "author": "Matthew Metnetsky <matthew@cowarthill.com>",
-  "license": "BSD"
+  "author": {
+    "name": "Matthew I. Metnetsky",
+    "email": "matthew@cowarthill.com"
+  },
+  "licenses": [
+    {
+      "type": "MIT +no-false-attribs",
+      "url": "https://fedoraproject.org/wiki/Licensing/MITNFA"
+    }
+  ]
 }
