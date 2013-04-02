@@ -3,6 +3,7 @@
 *.csv
 *.dat
 *.out
+*.swp
 *.pid
 *.gz
 *.tgz
