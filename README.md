@@ -1,4 +1,4 @@
-mongodb-stream-insert
+mongodb-writable-stream
 =============
 
 Node.js Library for piping a stream into a MongoDB collection and out again if needed.
@@ -7,6 +7,7 @@ Node.js Library for piping a stream into a MongoDB collection and out again if n
 Install
 =============
 
-If you use [`npm`](http://npmjs.org) its pretty simple: `npm install mongodb-stream-insert`.
+Not yet added to [`npm`](http://npmjs.org)! But in the meantime you can use `npm`
+to insall from GIT or just checkout the code.
 
-Otherwise, you can fork the code @ [GitHub](https://github.com/mimetnet/mongodb-stream-insert/).
+Otherwise, you can fork the code @ [GitHub](https://github.com/mimetnet/mongodb-writable-stream/).
