@@ -11,15 +11,15 @@ function InsertStream(collection, options) {
     if (!(this instanceof(InsertStream)))
         return new InsertStream(collection, options);
 
-    if (options && 'object' != typeof(options))
-        throw 'Second argument isnt a MongoDB Insert options';
-
     if ('object' !== typeof(collection))
-        throw 'First argument isnt an object';
+        throw new TypeError('First argument isnt an object');
     if ('function' !== typeof(collection.insert))
-        throw 'First argument doesnt have an insert function';
+        throw new TypeError('First argument doesnt have an insert function');
     if (3 > collection.insert.length)
-        throw 'First collection.insert expects three arguments';
+        throw new TypeError('First argument.insert expects three parameters');
+
+    if (options && 'object' != typeof(options))
+        throw new TypeError('Second argument isnt a MongoDB Insert options');
 
     Duplex.call(this, {objectMode:true});
 
