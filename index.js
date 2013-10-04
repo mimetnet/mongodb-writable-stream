@@ -47,7 +47,7 @@ InsertStream.prototype._write = function(chunk, encoding, done) {
     if (this._state.highWaterMark != this._state.queue.length) {
         done();
     } else {
-        setImmediate(this._dequeue.bind(this), done);
+        setImmediate(this._dequeue.bind(this, done));
     }
 };
 
