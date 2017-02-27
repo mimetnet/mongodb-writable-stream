@@ -1,6 +1,8 @@
 mongodb-writable-stream
 =============
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/mimetnet/mongodb-writable-stream.svg)](https://greenkeeper.io/)
+
 Node.js Library for piping a stream into a MongoDB collection and out again if needed.
 
 
