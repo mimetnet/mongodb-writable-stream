@@ -4,7 +4,7 @@
   "description": "Pipe a Node.js stream into a MongoDB collection and out again if needed",
   "main": "index.js",
   "dependencies": {
-    "readable-stream": ">= 1.0.0",
+    "readable-stream": "2.2.3",
     "setimmediate": ">= 1.0.1"
   },
   "devDependencies": {
